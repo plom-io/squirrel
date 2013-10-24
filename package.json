@@ -1,5 +1,5 @@
 {
-  "name": "squirrel",
+  "name": "dpkg-squirrel",
   "version": "0.0.0",
   "description": "Runs stuff in batch from some datapackage.json metadata, give them some inputs and package the outputs adding resources to the datapackage.",
   "main": "index.js",
