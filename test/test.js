@@ -4,7 +4,7 @@ var util = require('util')
   , path = require('path')
   , smap = require('../lib/map')
   , rimraf = require('rimraf')
-  , squirrel = require('..');
+  , Squirrel = require('..');
 
 var root = path.dirname(__filename);
 
@@ -57,6 +57,8 @@ describe('map', function(){
   });
 
   it('should work', function(done){
+    var squirrel = new Squirrel();
+
     squirrel.runMap(dpkg, options, function(err, dpkg){
       if (err) throw err;
       assert.deepEqual(dpkg.resources, [ 

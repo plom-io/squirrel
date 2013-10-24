@@ -1,7 +1,17 @@
 var async = require('async')
   , os = require('os')
+  , util = require('util')
   , clone = require('clone')
+  , events = require("events")
   , smap = require('./lib/map');
+
+
+function Squirrel() {
+  events.EventEmitter.call(this);
+}
+
+util.inherits(Squirrel, events.EventEmitter);
+
 
 /**
  * dpkg a datapackage.json
@@ -11,14 +21,16 @@ var async = require('async')
  * callback: err, dpgk where dpkg.resources have been appended to take
  * into account the generated resources.
  */
-exports.runMap = function(dpkg, options, callback){
+Squirrel.prototype.runMap = function(dpkg, options, callback){
+
+  var that = this;
 
   options.root = options.root || process.cwd();
   options.concurrency = options.concurrency || os.cpus().length;
 
   //create the queue
   var q = async.queue(function (task, cb) {
-    smap.runTask(task, cb);
+    smap.runTask(task, that, cb);
   }, options.concurrency);
 
   var data = clone(dpkg.analysis.filter(function(x){return x.name === 'map'})[0].data);
@@ -75,3 +87,5 @@ exports.runMap = function(dpkg, options, callback){
   })();
 
 };
+
+module.exports = Squirrel;
