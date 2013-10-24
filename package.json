@@ -1,0 +1,38 @@
+{
+  "name": "squirrel",
+  "version": "0.0.0",
+  "description": "Runs stuff in batch from some datapackage.json metadata, give them some inputs and package the outputs adding resources to the datapackage.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/plom-io/squirrel.git"
+  },
+  "keywords": [
+    "batch",
+    "runner",
+    "datapackage"
+  ],
+  "author": "Sebastien Ballesteros",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/plom-io/squirrel/issues"
+  },
+  "dependencies": {
+    "clone": "~0.1.11",
+    "async": "~0.2.9",
+    "mkdirp": "~0.3.5",
+    "minimatch": "~0.2.12",
+    "glob": "~3.2.6",
+    "mocha": "~1.13.0"
+  },
+  "devDependencies": {
+    "mocha": "~1.13.0",
+    "rimraf": "~2.2.2"
+  }
+}
