@@ -15,10 +15,12 @@ Usage
 
 
 Tests
+=====
 
     npm test
 
 
 Licence
+=======
 
 MIT
