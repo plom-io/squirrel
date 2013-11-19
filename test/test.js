@@ -61,19 +61,26 @@ describe('map', function(){
 
     squirrel.runMap("test-pipeline", options, function(err, dpkg){
       if (err) throw err;
-      assert.deepEqual(dpkg.resources, [ 
-        { name: 'lhs', path: 'data/lhs.json', format: 'json' },
-        { name: 'X_0', path: path.resolve(root, 'data', 'X_0.csv'), format: 'csv' },
-        { name: 'X_1', path: path.resolve(root, 'data', 'X_1.csv'), format: 'csv'  },
-        { name: 'trace_0', path: path.resolve(root, 'data', 'subdata', 'my_trace_0.csv'), format: 'csv'  },
-        { name: 'trace_1', path: path.resolve(root, 'data', 'subdata', 'my_trace_1.csv'), format: 'csv'  }
-      ]);
 
-      for(var i=1; i<dpkg.resources.length; i++){
-        assert(fs.existsSync(dpkg.resources[i].path));
-      }
+      squirrel = new Squirrel(dpkg);
+      //run another time to test if resources are replaced instead of still appended
+      squirrel.runMap("test-pipeline", options, function(err, dpkg){
+        if (err) throw err;
 
-      done();
+        assert.deepEqual(dpkg.resources, [ 
+          { name: 'lhs', path: 'data/lhs.json', format: 'json' },
+          { name: 'X_0', path: path.resolve(root, 'data', 'X_0.csv'), format: 'csv' },
+          { name: 'X_1', path: path.resolve(root, 'data', 'X_1.csv'), format: 'csv'  },
+          { name: 'trace_0', path: path.resolve(root, 'data', 'subdata', 'my_trace_0.csv'), format: 'csv'  },
+          { name: 'trace_1', path: path.resolve(root, 'data', 'subdata', 'my_trace_1.csv'), format: 'csv'  }
+        ]);
+
+        for(var i=1; i<dpkg.resources.length; i++){
+          assert(fs.existsSync(dpkg.resources[i].path));
+        }
+
+        done();
+      });
     });
   });
 
