@@ -1,17 +1,14 @@
 {
   "name": "dpkg-squirrel",
-  "version": "0.0.0",
-  "description": "Runs stuff in batch from some datapackage.json metadata, give them some inputs and package the outputs adding resources to the datapackage.",
+  "version": "0.1.0",
+  "description": "Runs stuff in batch from some data package metadata, give them some inputs and package the outputs adding resources to the data package.",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "make test"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/plom-io/squirrel.git"
+    "url": "git://github.com/standard-analytics/squirrel.git"
   },
   "keywords": [
     "batch",
@@ -21,7 +18,7 @@
   "author": "Sebastien Ballesteros",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/plom-io/squirrel/issues"
+    "url": "https://github.com/standard-analytics/squirrel/issues"
   },
   "dependencies": {
     "clone": "~0.1.11",

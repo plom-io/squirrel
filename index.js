@@ -5,25 +5,31 @@ var async = require('async')
   , events = require("events")
   , smap = require('./lib/map');
 
-
-function Squirrel() {
+function Squirrel(dpkg) {
+  this.dpkg = dpkg;
   events.EventEmitter.call(this);
 }
 
 util.inherits(Squirrel, events.EventEmitter);
 
-
 /**
- * dpkg a datapackage.json
- *
+ * dpkg a datapackage
+ * map the map object to run
  * options: a hash with: root, concurency.
  *
  * callback: err, dpgk where dpkg.resources have been appended to take
  * into account the generated resources.
  */
-Squirrel.prototype.runMap = function(dpkg, options, callback){
+Squirrel.prototype.runMap = function(nameMap, options, callback){
+
+  var map = this.dpkg.pipeline.filter(function(x){return x.type==='map' && x.name === nameMap;})[0];
+  if(!map){
+    return callback(new Error('no map with this name: ' + nameMap));
+  }
 
   var that = this;
+
+  var dpkg = clone(this.dpkg);
 
   options.root = options.root || process.cwd();
   options.concurrency = options.concurrency || os.cpus().length;
@@ -33,7 +39,7 @@ Squirrel.prototype.runMap = function(dpkg, options, callback){
     smap.runTask(task, that, cb);
   }, options.concurrency);
 
-  var data = clone(dpkg.analysis.filter(function(x){return x.name === 'map'})[0].data);
+  var data = clone(map.data);
   var i=0, j=0;
 
   (function pushTask(){

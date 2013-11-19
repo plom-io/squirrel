@@ -1,0 +1,48 @@
+{
+  "name": "test",
+  "version": "0.0.0",
+
+  "pipeline": [
+    {
+      "name": "test-pipeline",
+      "type": "map",
+      "data": [
+        {
+          "command": "bintestjs",
+          "args": ["$ROOT/data", "*", "X"],
+          "cwd": "bin",
+          "walltime": "00:01:00",
+          "inputs": [
+            { "resource": "lhs", "collection": true}
+          ],
+          "outputs": [
+            { "path": "data/skip_*.json" },
+            { "path": "data/X_*.csv", "save": { "resource": "X_*" } }
+          ]
+        },
+
+        {
+          "command": "bintestjs",
+          "args": ["$ROOT/data", "*", "trace"],
+          "cwd": "bin",
+          "walltime": "00:01:00",
+          "inputs": [
+            { "path": "data/skip_*.json" } 
+          ],
+          "outputs": [
+            { "path": "data/trace_*.csv", "save" : { "resource": "trace_*", "path": "data/subdata/my_trace_*.csv" } },
+            { "path": "data/mle_*.json" }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "resources": [
+    {
+      "name": "lhs",
+      "path": "data/lhs.json",
+      "format": "json"
+    }
+  ]
+}

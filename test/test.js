@@ -12,10 +12,10 @@ describe('map', function(){
   var dpkg, map, options;
 
   before(function(){
-    dpkg = JSON.parse(fs.readFileSync(path.join(root, 'data', 'datapackage.json')));
-    map = dpkg.analysis.filter(function(x){return x.name === 'map'})[0].data;
+    dpkg = JSON.parse(fs.readFileSync(path.join(root, 'data', 'package.json')));
+    map = dpkg.pipeline[0];
     options = {root: root};
-    inputs = map[0].inputs;
+    inputs = map.data[0].inputs;
   });
 
   it('should add paths to inputs', function(done){    
@@ -41,9 +41,9 @@ describe('map', function(){
   it('should create a batch of task', function(done){    
     smap.addPaths(inputs, dpkg.resources, options, function(err, inputs){
       smap.addData(inputs, function(err, res){
-        map[0].inputs = res;
+        map.data[0].inputs = res;
 
-        var batch = smap.makeTaskBatch(map[0], options);
+        var batch = smap.makeTaskBatch(map.data[0], options);
 
         assert.equal(batch[0].command, path.resolve(root, "bin/bintestjs"));
         assert.equal(batch[0].options.cwd, path.resolve(root, "bin"));
@@ -57,18 +57,16 @@ describe('map', function(){
   });
 
   it('should work', function(done){
-    var squirrel = new Squirrel();
+    var squirrel = new Squirrel(dpkg);
 
-    squirrel.runMap(dpkg, options, function(err, dpkg){
+    squirrel.runMap("test-pipeline", options, function(err, dpkg){
       if (err) throw err;
       assert.deepEqual(dpkg.resources, [ 
         { name: 'lhs', path: 'data/lhs.json', format: 'json' },
-        { name: 'X_0', path: path.resolve(root, 'data', 'X_0.csv') },
-        { name: 'X_1', path: path.resolve(root, 'data', 'X_1.csv') },
-        { name: 'trace_0',
-          path: path.resolve(root, 'data', 'subdata', 'my_trace_0.csv') },
-        { name: 'trace_1',
-          path: path.resolve(root, 'data', 'subdata', 'my_trace_1.csv') }
+        { name: 'X_0', path: path.resolve(root, 'data', 'X_0.csv'), format: 'csv' },
+        { name: 'X_1', path: path.resolve(root, 'data', 'X_1.csv'), format: 'csv'  },
+        { name: 'trace_0', path: path.resolve(root, 'data', 'subdata', 'my_trace_0.csv'), format: 'csv'  },
+        { name: 'trace_1', path: path.resolve(root, 'data', 'subdata', 'my_trace_1.csv'), format: 'csv'  }
       ]);
 
       for(var i=1; i<dpkg.resources.length; i++){

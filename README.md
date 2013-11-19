@@ -11,11 +11,12 @@ Usage
     var Sqrl = require('dpkg-squirrel');
     var dpgk = require('datapackage.json);
 
-    var sqrl = new Sqrl();
-    sqrl.runMap(dpkg, {concurrency: 4}, function(err, dpkg){
+    var sqrl = new Sqrl(dpkg);
+    sqrl.runMap(name, {concurrency: 4}, function(err, dpkg){
        //everything has been run;  dpkg.ressources has been appended
     });
-    sqrl.on("step", function(data){console.log('pipeline step completed (%s)', data)});
+    sqrl.on("step", function(step){console.log('pipeline step completed (%s)', step)});
+
 
 Tests
 =====
