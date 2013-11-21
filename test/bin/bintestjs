@@ -10,4 +10,6 @@ var root = process.argv[2]
 if(process.argv.length===5){
   fs.writeFileSync(path.resolve(root, ((what === "X")? "skip_" : "mle_") + id + ".json"), JSON.stringify({hello: "world"}));
   fs.writeFileSync(path.resolve(root, what + '_' + id + ".csv"), JSON.stringify({hello: "world"}));
+} else {
+  process.exit(1);
 }

@@ -3,95 +3,106 @@ var async = require('async')
   , util = require('util')
   , clone = require('clone')
   , events = require("events")
-  , smap = require('./lib/map');
+  , sutil = require('./lib/sutil');
 
-function Squirrel(dpkg) {
-  this.dpkg = dpkg;
+function Squirrel(dpkg, options) {
+  options = options || {};
+
+  this.dpkg = clone(dpkg);
   events.EventEmitter.call(this);
-}
+
+  this.root = options.root || path.resolve();
+  this.concurrency = options.concurrency || os.cpus().length;
+};
 
 util.inherits(Squirrel, events.EventEmitter);
 
-/**
- * dpkg a datapackage
- * map the map object to run
- * options: a hash with: root, concurency.
- *
- * callback: err, dpgk where dpkg.resources have been appended to take
- * into account the generated resources.
- */
-Squirrel.prototype.runMap = function(nameMap, options, callback){
 
-  var map = this.dpkg.pipeline.filter(function(x){return x.type==='map' && x.name === nameMap;})[0];
-  if(!map){
-    return callback(new Error('no map with this name: ' + nameMap));
-  }
-
+Squirrel.prototype.start = function(callback){
   var that = this;
 
-  var dpkg = clone(this.dpkg);
-
-  options.root = options.root || process.cwd();
-  options.concurrency = options.concurrency || os.cpus().length;
-
-  //create the queue
-  var q = async.queue(function (task, cb) {
-    smap.runTask(task, that, cb);
-  }, options.concurrency);
-
-  var data = clone(map.data);
-  var i=0, j=0;
-
-  (function pushTask(){
-    
-    smap.addPaths(data[i].inputs, dpkg.resources, options, function(err){
-      if(err) return callback(err);
-
-      smap.addData(data[i].inputs, function(err){
-        if(err) return callback(err);
-
-        var taskBatch = smap.makeTaskBatch(data[i], options);
-        
-        if(!taskBatch.length){
-          if(++i <data.length){
-            pushTask();
-          } else {
-            callback(null, dpkg);
-          }
+  async.eachSeries(that.dpkg.pipeline, function(stage, cb){
+    if('map' in stage){
+      that.map(stage.map, function(err){
+        if(err) return cb(err);
+        if('reduce' in stage){
+          that.reduce(stage.reduce, cb);
         } else {
-
-          smap.mkdirpOutputs(data[i].outputs, options, function(err){
-            if(err) return callback(err);
-
-            j=0;
-            q.push(taskBatch, function(err){
-              if(err) return callback(err);
-
-              if (++j >= taskBatch.length){
-                smap.pkgAndMvOutputs(data[i].outputs, dpkg, options, function(err){
-                  if(err) return callback(err);
-
-                  if (++i <data.length) {
-                    pushTask();
-                  } else {
-                    smap.cleanUp(data, dpkg, options, function(err){
-                      if(err) return callback(err);
-                      callback(null, dpkg);
-                    });
-                  }
-                });
-              }
-
-            });
-          });
-
+          cb(null);
         }
-
       });
-    });
+    } else if ('run' in stage) {
+      that.run(stage.run, cb);
+    } else {
+      cb(new Error('invalid pipeline'));
+    }
     
-  })();
-
+  }, function(err){
+    return callback(err, clone(that.dpkg));
+  });
+  
 };
 
+
+Squirrel.prototype.map = function(map, callback){
+  map = clone(map);
+  var that = this;
+
+  async.eachSeries(map, function(step, cb){
+    that._init(step, function(err){
+      if(err) return cb(err);
+      var batch = that._makeTasksMap(step);
+      async.eachLimit(batch, that.concurrency, that._runTask.bind(that), function(err){
+        if(err) return callback(err);
+        that._package(step, cb);
+      });
+    });
+  }, function(err){
+    if(err) return callback(err);
+    that._cleanUp(map, callback);
+  });
+};
+
+Squirrel.prototype.reduce = function(reduce, callback){
+  reduce = clone(reduce);
+  var that = this;
+
+  async.eachSeries(reduce, function(step, cb){
+    that._init(step, function(err){
+      if(err) return cb(err);
+      var task = that._makeTaskReduce(step);
+      that._runTaskAndPackage(task, step, cb);
+    });
+  }, function(err){
+    if(err) return callback(err);    
+    that._cleanUp(reduce, callback);
+  });
+};
+
+Squirrel.prototype.run = function(run, callback){
+  run = clone(run);
+  var that = this;
+
+  async.eachLimit(run, that.concurrency, function(step, cb){
+    that._init(step, function(err){
+      if(err) return cb(err);
+      var task = that._makeTaskRun(step);
+      that._runTaskAndPackage(task, step, cb);
+    });
+  }, function(err){
+    if(err) return callback(err);
+    that._cleanUp(run, callback);
+  });
+};
+
+
 module.exports = Squirrel;
+
+Squirrel.prototype._init = sutil._init;
+Squirrel.prototype._makeTasksMap = sutil._makeTasksMap;
+Squirrel.prototype._makeTaskReduce = sutil._makeTaskReduce;
+Squirrel.prototype._makeTaskRun = sutil._makeTaskRun;
+Squirrel.prototype._runTask = sutil._runTask;
+Squirrel.prototype._package = sutil._package;
+Squirrel.prototype._runTaskAndPackage = sutil._runTaskAndPackage;
+Squirrel.prototype._cleanUp = sutil._cleanUp;

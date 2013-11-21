@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+var fs = require('fs')
+  , path = require('path');
+
+var inputs = process.argv.slice(2);
+if(inputs.length == 2){
+  fs.writeFileSync(path.join(path.dirname(inputs[0]), 'summary.json'), JSON.stringify({summary: true}));
+} else {
+  process.exit(1);
+}
