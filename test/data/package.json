@@ -8,9 +8,9 @@
       "map": [
         {
           "command": "bintestjs",
-          "args": ["$ROOT/data", "*", "X"],
+          "args": ["$ROOT/data", "$ID", "X"],
           "cwd": "bin",
-          "walltime": "00:01:00",
+          "timeout": "00:01:00",
           "inputs": [ { "resource": "lhs", "collection": true, "stdin": true } ],
           "outputs": [
             { "path": "data/skip_*.json" },
@@ -20,9 +20,9 @@
 
         {
           "command": "bintestjs",
-          "args": ["$ROOT/data", "*", "trace"],
+          "args": ["$ROOT/data", "$ID", "trace"],
           "cwd": "bin",
-          "walltime": "00:01:00",
+          "timeout": "00:01:00",
           "inputs": [ { "path": "data/skip_*.json" } ],
           "outputs": [
             { "path": "data/trace_*.csv", "save": { "resource": "trace_*", "path": "data/subdata/my_trace_*.csv" } },
@@ -33,9 +33,9 @@
       "reduce": [
         {
           "command": "binreducejs",
-          "args": ["*"],
+          "args": ["$IN"],
           "cwd": "bin",
-          "walltime": "00:01:00",
+          "timeout": "00:01:00",
           "inputs": [ { "resource": "trace_*" } ],
           "outputs": [
             { "path": "data/subdata/summary.json", "save": { "resource": "summary" } }

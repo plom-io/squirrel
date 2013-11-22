@@ -10,7 +10,7 @@ Usage
 =====
 
     var Sqrl = require('dpkg-squirrel');
-    var dpgk = require('/path/to/data/package.json);
+    var dpgk = require('/path/to/data/package.json');
 
     var sqrl = new Sqrl(dpkg, {concurrency: 4});
     sqrl.start(function(err, newDpkg){
