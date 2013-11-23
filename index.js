@@ -15,6 +15,8 @@ function Squirrel(dpkg, options) {
   this.reRoot = new RegExp(this.root);
 
   this.dpkg = clone(dpkg);
+
+  //TODO validate dpkg.pipeline: if stdin: true => spawm => args otherwise exec is ok. ...
   
   //preprocessing of the pipeline: resolve the repeated step
   this.pipeline = clone(this.dpkg.pipeline);
