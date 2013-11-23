@@ -7,7 +7,7 @@
       "name": "test-pipeline",
       "map": [
         {
-          "command": "bintestjs",
+          "command": "./bintestjs",
           "args": ["$ROOT/data", "$ID", "X"],
           "cwd": "bin",
           "timeout": "00:01:00",
@@ -19,7 +19,7 @@
         },
 
         {
-          "command": "bintestjs",
+          "command": "./bintestjs",
           "args": ["$ROOT/data", "$ID", "trace"],
           "cwd": "bin",
           "timeout": "00:01:00",
@@ -32,7 +32,7 @@
       ],
       "reduce": [
         {
-          "command": "binreducejs",
+          "command": "./binreducejs",
           "args": ["$IN"],
           "cwd": "bin",
           "timeout": "00:01:00",

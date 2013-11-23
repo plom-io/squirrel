@@ -47,6 +47,8 @@ Squirrel.prototype.start = function(callback){
   var that = this;
 
   async.eachSeries(that.pipeline, function(stage, cb){
+    that.emit('stage', 'starting stage: '+ stage.name);
+
     if('map' in stage){
       that.map(stage, function(err){
         if(err) return cb(err);

@@ -68,8 +68,8 @@ describe('squirrel', function(){
 
           var batch = squirrel._makeTasksMap(step.map[0]);
 
-          assert.equal(batch[0].command, path.resolve(root, "bin/bintestjs"));
-          assert.equal(batch[0].options.cwd, path.resolve(root, "bin"));
+          assert.equal(batch[0].command, './bintestjs');
+          assert.equal(batch[0].options.cwd, path.resolve(root, 'bin'));
           assert.equal(batch[0].options.timeout, 60*1000);
           assert.deepEqual(batch[0].args, [ path.resolve(root, 'data'), '0', 'X']);
           assert.deepEqual(batch[1].args, [ path.resolve(root, 'data'), '1', 'X']);
