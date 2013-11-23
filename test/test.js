@@ -22,14 +22,15 @@ describe('squirrel', function(){
   describe('pipeline', function(){
     var dpkg, step, inputs;
     var squirrel;
+    var reRoot = new RegExp(root);
 
     var expectedResources = [
       { name: 'lhs', path: 'data/lhs.json', format: 'json' },
-      { name: 'X_0', path: path.resolve(root, 'data', 'X_0.csv'), format: 'csv' },
-      { name: 'X_1', path: path.resolve(root, 'data', 'X_1.csv'), format: 'csv'  },
-      { name: 'trace_0', path: path.resolve(root, 'data', 'subdata', 'my_trace_0.csv'), format: 'csv'  },
-      { name: 'trace_1', path: path.resolve(root, 'data', 'subdata', 'my_trace_1.csv'), format: 'csv'  },
-      { name: 'summary', path: path.resolve(root, 'data', 'subdata', 'summary.json'), format: 'json'  }
+      { name: 'X_0', path: path.resolve(root, 'data', 'X_0.csv').replace(reRoot, '.'), format: 'csv' },
+      { name: 'X_1', path: path.resolve(root, 'data', 'X_1.csv').replace(reRoot, '.'), format: 'csv'  },
+      { name: 'trace_0', path: path.resolve(root, 'data', 'subdata', 'my_trace_0.csv').replace(reRoot, '.'), format: 'csv'  },
+      { name: 'trace_1', path: path.resolve(root, 'data', 'subdata', 'my_trace_1.csv').replace(reRoot, '.'), format: 'csv'  },
+      { name: 'summary', path: path.resolve(root, 'data', 'subdata', 'summary.json').replace(reRoot, '.'), format: 'json'  }
     ];
 
 
@@ -88,7 +89,7 @@ describe('squirrel', function(){
 
         assert.deepEqual(mydpkg.resources, expectedResources.slice(0,-1));
         for(var i=1; i<mydpkg.resources.length; i++){
-          assert(fs.existsSync(mydpkg.resources[i].path));
+          assert(fs.existsSync(path.resolve(root, mydpkg.resources[i].path)));
         }
         done();
       });
@@ -103,7 +104,7 @@ describe('squirrel', function(){
 
           assert.deepEqual(squirrel.dpkg.resources, expectedResources);
           for(var i=1; i<squirrel.dpkg.resources.length; i++){
-            assert(fs.existsSync(squirrel.dpkg.resources[i].path));
+            assert(fs.existsSync(path.resolve(root, squirrel.dpkg.resources[i].path)));
           }
           done();
         });
@@ -116,7 +117,7 @@ describe('squirrel', function(){
 
         assert.deepEqual(newDpkg.resources, expectedResources);
         for(var i=1; i<newDpkg.resources.length; i++){
-          assert(fs.existsSync(newDpkg.resources[i].path));
+          assert(fs.existsSync(path.resolve(root, newDpkg.resources[i].path)));
         }
         done();
       });

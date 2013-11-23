@@ -12,6 +12,7 @@ function Squirrel(dpkg, options) {
 
   this.root = options.root || path.resolve();
   this.concurrency = options.concurrency || os.cpus().length;
+  this.reRoot = new RegExp(this.root);
 
   this.dpkg = clone(dpkg);
   
