@@ -16,13 +16,13 @@ function Squirrel(dpkg, options) {
 
   this.dpkg = clone(dpkg);
 
-  //TODO validate dpkg.pipeline: if stdin: true => spawm => args otherwise exec is ok. ...
+  //TODO validate dpkg.analytics: if stdin: true => spawm => args otherwise exec is ok. ...
   
-  //preprocessing of the pipeline: resolve the repeated step
-  this.pipeline = clone(this.dpkg.pipeline);
+  //preprocessing of the analytics: resolve the repeated step
+  this.analytics = clone(this.dpkg.analytics);
 
   var that = this;
-  this.dpkg.pipeline.forEach(function(stage, inds){
+  this.dpkg.analytics.forEach(function(stage, inds){
     ['map', 'reduce', 'run'].forEach(function(type){
       if(type in stage){
         var newSteps = [];
@@ -36,7 +36,7 @@ function Squirrel(dpkg, options) {
             newSteps.push(clone(step));
           }
         });
-        that.pipeline[inds][type] = newSteps;
+        that.analytics[inds][type] = newSteps;
       }
     });
   });
@@ -49,7 +49,7 @@ util.inherits(Squirrel, events.EventEmitter);
 Squirrel.prototype.start = function(callback){
   var that = this;
 
-  async.eachSeries(that.pipeline, function(stage, cb){
+  async.eachSeries(that.analytics, function(stage, cb){
     that.emit('stage', 'starting stage: '+ stage.name);
 
     if('map' in stage){
@@ -64,7 +64,7 @@ Squirrel.prototype.start = function(callback){
     } else if ('run' in stage) {
       that.run(stage, cb);
     } else {
-      cb(new Error('invalid pipeline'));
+      cb(new Error('invalid analytics'));
     }
     
   }, function(err){

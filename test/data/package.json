@@ -2,9 +2,9 @@
   "name": "test",
   "version": "0.0.0",
 
-  "pipeline": [
+  "analytics": [
     {
-      "name": "test-pipeline",
+      "name": "test-analytics",
       "map": [
         {
           "command": "./bintestjs",

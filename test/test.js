@@ -12,14 +12,14 @@ describe('squirrel', function(){
 
   describe('repeat', function(){
     it('should resolve repeat', function(){    
-      var dpkg = { pipeline: [ { run: [ { repeat: 3, command: 'a', inputs: [ { path: 'a' } ], outputs: [ { path: 'b' } ] } ] } ] };
+      var dpkg = { analytics: [ { run: [ { repeat: 3, command: 'a', inputs: [ { path: 'a' } ], outputs: [ { path: 'b' } ] } ] } ] };
       var squirrel = new Squirrel(dpkg, {root: root});
-      assert.equal(squirrel.pipeline[0].run.length, 3);
+      assert.equal(squirrel.analytics[0].run.length, 3);
     });
   });
 
 
-  describe('pipeline', function(){
+  describe('analytics', function(){
     var dpkg, step, inputs;
     var squirrel;
     var reRoot = new RegExp(root);
@@ -36,7 +36,7 @@ describe('squirrel', function(){
 
     beforeEach(function(){
       dpkg = JSON.parse(fs.readFileSync(path.join(root, 'data', 'package.json')));
-      step = dpkg.pipeline[0];
+      step = dpkg.analytics[0];
       inputs = step.map[0].inputs;
       squirrel = new Squirrel(dpkg, {root: root});
     });
@@ -82,7 +82,7 @@ describe('squirrel', function(){
 
     it('map should work', function(done){
 
-      squirrel.map(dpkg.pipeline[0], function(err){
+      squirrel.map(dpkg.analytics[0], function(err){
         if (err) throw err;
         
         var mydpkg = squirrel.dpkg;
@@ -97,9 +97,9 @@ describe('squirrel', function(){
 
     it('reduce should work', function(done){
 
-      squirrel.map(dpkg.pipeline[0], function(err){
+      squirrel.map(dpkg.analytics[0], function(err){
         if (err) throw err;
-        squirrel.reduce(dpkg.pipeline[0], function(err){
+        squirrel.reduce(dpkg.analytics[0], function(err){
           if (err) throw err;
 
           assert.deepEqual(squirrel.dpkg.resources, expectedResources);
