@@ -1,6 +1,6 @@
 {
   "name": "dpkg-squirrel",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Run a pipeline of analytics descibed as metadata of a datapackage, give them some inputs and package the outputs adding resources to the data package.",
   "main": "index.js",
   "scripts": {
